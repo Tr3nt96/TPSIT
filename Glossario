@@ -1,44 +1,25 @@
 # Glossario Thread:
 
-Un thread è un'unità logica di esecuzione della CPU.
-Per implementarle a C++ si usa la libreria thread --> #include <thread>
-I principali comandi di questa libreria sono:
+Un thread è un'unità logica di esecuzione della CPU. Libreria --> #include <thread>
+I principali comandi:
+- std::thread nome(nomeFunzione, arg); --> dichiarare un thread (se senza un nome allora non lo si può controllare = errore = non fare)
 
-- std::thread nome(nomeFunzione, arg1, arg2);
-  Questo comando serve per dichiarare un thread. Si può dichiarare anche senza un nome, ma in quel caso non si può controllare e, quindi, il compilatore spesso lo impedisce oppure il programma dà errore.
+  +  nome = nome del thread (di solito trd_nome) ; nomeFunzione = funzione che viene eseguita dal thread ; arg = argomenti che la funzione riceve;
 
-  nome = nome del thread (di solito t1, t2, ...) ; nomeFunzione = funzione che viene eseguita dal thread ; arg1, arg2 = argomenti che la funzione riceve;
+  +  Per controllare i thread si usano principalmente questi comandi:
+      ° nomeThread.join(); --> Bloccare un thread principale finchè il secondario non avrà finito. Viene usato per la sincronizzazione dei thread, ma dopo che è terminato non è riutilizzabile.
+        ES: Il main viene bloccato per far eseguire i thread di Worker
+      ° nomeThread.joinable(); --> Serve per controllare se un thread è libero o occupato.
+      ° nomeThread.detach(); --> Il thread continua ad eseguire in background indipendentemente dal thread principale. Viene usato in operazioni non bloccanti ma non si può controllare. Bisogna quindi non farlo accedere a dati distrutti.
+        SPECIFICAZIONE: Va fatto aspettare anche il thread principale (es: main), altrimenti chiuderebbe il programma prima che il thread secondario possa finire il suo lavoro.
+----------------------------------------
+- std::this_thread::comando; --> namespace che rappresenta il thread corrente e serve per cotrollarlo (in questo caso aggiungere #include <chrono>) ed interrogarlo.
+    + I comandi che può eseguire sono:
+      ° std::this_thread::sleep_for(std::chrono::seconds(t)); --> Serve per controllarlo e farlo aspettare un tempo t (std::chrono::milliseconds(t) se si vuole lavorare in millisecondi)
+      ° std:this_thread::sleep_until(wakeUp); --> Serve per controllarlo e farlo dormire fino a wakeUp
+      ° std::this_thread::get_id(); --> Serve per interrogare il thread e gli fa restituire il suo ID. E' quindi usato per identificare i vari thread.
 
-Per controllare i thread si usano principalmente questi comandi:
-  + nomeThread.join(); --> Serve per bloccare un thread secondario finchè il principale non avrà finito. Viene usato per la sincronizzazione dei thread, ma dopo che è terminato non è riutilizzabile.
-  Es: void stampa(int x, int y){
-    std::cout<<x+y;
-  }
-  int main() {
-    std::thread t1(stampa, 3, 5);
-    t1.join();
-    return 0;
-  }
-
-  + nomeThread.joinable(); --> Serve per controllare se un thread è libero o occupato.
-
-  + nomeThread.detach(); --> Il thread continua ad eseguire in background indipendentemente dal thread principale. Viene usato in operazioni non bloccanti ma non si può controllare. Bisogna quindi non farlo accedere a dati distrutti.
-  Es: void stampa() {
-    std::this_thread::sleep_for(std::chrono::seconds(2));
-    std::cout<<"Hello";
-  }
-  int main() {
-    std::thread t1(stampa);
-    t1.detach();
-    std::cout<<"Main";
-    std::this_thread::sleep_for(srd:.chrono::seconds(3));
-    return 0
-  }
-  In questo caso va fatto aspettare anche il thread principale, altrimenti chiuderebbe tutto prima che t1 poss stampare Hello.
-
-- std::this_thread::comando;
-  Questo comando è un namespace dche rappresenta il thread corrente e serve per cotrollarlo ed interrogarlo.
-  I comandi che può eseguire sono:
-  + std::this_thread::sleep_for(std::chrono::seconds(t)); --> Serve per controllarlo e farlo aspettare un tempo t
-  + std:this_thread::sleep_until(wakeUp); --> Serve per controllarlo e farlo dormire fino a wakeUp
-  + std::this_thread::get_id(); --> Serve per interrogare il thread e gli fa restituire il suo ID. E' quindi usato per identificare i vari thread.
+# Glossario Mutex:
+# Glossario Semaphore:
+# Glossario Condition_variable:
+# Glossario Queue:
